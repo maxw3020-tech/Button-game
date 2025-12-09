@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Button Game</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Press Start 2P', monospace;
+      background: #166602;
+      color: #e8dcb9;
+      image-rendering: pixelated;
+    }
+    #game {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-shadow: 3px 3px #000;
+      position: relative;
+      z-index: 2;
+    }
+    #instructions {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 8px;
+    }
+    button {
+      padding: 12px 24px;
+      background: #000000;
+      border: 2px solid #000000;
+      color: #e8dcb9;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      image-rendering: pixelated;
+      box-shadow: 2px 2px #000;
+      transition: transform 0.1s;
+      position: absolute;
+      z-index: 2;
+    }
+    button:hover {
+      transform: scale(1.1);
+      background: #5c4229;
+    }
+    #videoOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 4;
+    }
+    #videoOverlay video {
+      max-width: 80vw;
+      max-height: 80vh;
+    }
+    .backgroundVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      opacity: 0.1;
+      z-index: 1;
+      pointer-events: none;
+      animation: float 20s infinite alternate;
+      display: none;
+    }
+    @keyframes float {
+      0% { transform: translate(0,0); }
+      100% { transform: translate(50px,50px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="backgroundContainer"></div>
+
+  <div id="game">
+    <h1 id="title">Find the Hidden Button</h1>
+    <p id="instructions">Level 1: Click the hidden button somewhere on the screen.</p>
+  </div>
+
+  <div id="videoOverlay">
+    <video id="prankVideo" src="AHHAHA.mp4"></video>
+  </div>
+
+  <script>
+    let level = 1;
+    const title = document.getElementById('title');
+    const instructions = document.getElementById('instructions');
+    const overlay = document.getElementById('videoOverlay');
+    const video = document.getElementById('prankVideo');
+    const bgContainer = document.getElementById('backgroundContainer');
+
+    const audio = new Audio('maon.mp3');
+
+    function playMedia() {
+      audio.currentTime = 0;
+      audio.play();
+      bgContainer.innerHTML = ''; // clear previous
+      for (let i = 0; i < 10; i++) {
+        const bgVideo = document.createElement('video');
+        bgVideo.src = 'AHHAHA.mp4';
+        bgVideo.autoplay = true;
+        bgVideo.muted = true;
+        bgVideo.loop = true;
+        bgVideo.className = 'backgroundVideo';
+        bgVideo.style.left = Math.random() * 100 + 'vw';
+        bgVideo.style.top = Math.random() * 100 + 'vh';
+        bgVideo.style.width = (50 + Math.random() * 100) + 'px';
+        bgVideo.style.height = 'auto';
+        bgContainer.appendChild(bgVideo);
+      }
+      overlay.style.display = 'flex';
+      video.play();
+    }
+
+    function spawnButton() {
+      const btn = document.createElement('button');
+      btn.textContent = 'X';
+
+      const size = 40 + Math.random() * 10;
+      btn.style.width = size + 'px';
+      btn.style.height = size + 'px';
+      btn.style.fontSize = '14px';
+
+      const maxX = window.innerWidth - size - 20;
+      const maxY = window.innerHeight - size - 20;
+      btn.style.left = (20 + Math.random() * maxX) + 'px';
+      btn.style.top = (20 + Math.random() * maxY) + 'px';
+
+      btn.style.opacity = 0.6;
+      btn.style.background = '#2d1c13';
+      btn.style.borderColor = '#3e2a1c';
+
+      btn.addEventListener('mouseenter', () => { btn.style.opacity = 0.9; });
+      btn.addEventListener('mouseleave', () => { btn.style.opacity = 0.6; });
+
+      btn.addEventListener('click', () => {
+        btn.remove();
+        level++;
+        if (level > 3) {
+          playMedia();
+        } else {
+          title.textContent = 'Level ' + level;
+          instructions.textContent = 'The button hides deeper within the realm...';
+          spawnButton();
+        }
+      });
+
+      document.body.appendChild(btn);
+    }
+
+    spawnButton();
+
+    video.addEventListener('ended', () => {
+      overlay.style.display = 'none';
+      bgContainer.innerHTML = '';
+    });
+  </script>
+</body>
+</html>
