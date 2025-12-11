@@ -283,32 +283,34 @@
       prankLoopAudio.play(); // start looping maon.mp3
     }
 
-    function spawnButton() {
-      const btn = document.createElement('button');
-      btn.className = 'gameButton';
-      const maxX = window.innerWidth - 90;
-      const maxY = window.innerHeight - 90;
-      btn.style.left = Math.random() * maxX + 'px';
-      btn.style.top = Math.random() * maxY + 'px';
+ function spawnButton() {
+  const btn = document.createElement('button');
+  btn.className = 'gameButton';
+  const maxX = window.innerWidth - 90;
+  const maxY = window.innerHeight - 90;
+  btn.style.left = Math.random() * maxX + 'px';
+  btn.style.top = Math.random() * maxY + 'px';
 
-      btn.addEventListener('click', () => {
-        const audio = new Audio(`alpha${level}.mp3`);
-        audio.play();
-        btn.remove();
-        if(level < totalLevels){
-          level++;
-          levelDisplay.textContent = 'Level: ' + level;
-          updateBackground();
-          spawnButton();
-        } else {
-          timerDisplay.style.display = 'none';
-          levelInput.style.display = 'block';
-          levelInput.focus();
-        }
-      });
+  btn.addEventListener('click', () => {
+    const audio = new Audio(`alpha${level}.mp3`);
+    audio.play();
+    btn.remove();
 
-      gameDiv.appendChild(btn);
+    if (level < totalLevels) {
+      level++;
+      levelDisplay.textContent = 'Level: ' + level;
+      updateBackground();
+      spawnButton();
+    } else {
+      clearInterval(timerInterval);   // <<< STOP THE TIMER HERE
+      timerDisplay.style.display = 'none';
+      levelInput.style.display = 'block';
+      levelInput.focus();
     }
+  });
+
+  gameDiv.appendChild(btn);
+}
 
     function startTimer() {
       timerInterval = setInterval(() => {
@@ -331,7 +333,7 @@ readSign.addEventListener('click', () => {
     'Klicka på de röda knapparna så',
     'snabbt du kan. Du har 20 sekunder',
     'Det finns totalt 10 nivåer att klara.',
-    'nivå. På sista nivån måste du',
+    'På sista nivån måste du',
     'skriva bokstäverna i ordning. Hör ljudet',
     'noggrant för att följa alfabetet. Sätt',
     'volymen på max för att höra alla',
