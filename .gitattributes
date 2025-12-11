@@ -1,2 +1,0 @@
-path/to/your/largefile.ext filter=lfs diff=lfs merge=lfs -text
-Prank/* filter=lfs diff=lfs merge=lfs -text
